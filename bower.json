@@ -1,0 +1,29 @@
+{
+  "name": "imagecache",
+  "authors": [
+    "sviluppo@easysoft.me"
+  ],
+  "description": "NES internal wrapper for ImgCache plugin",
+  "main": "nes.imagecache.min.js",
+  "moduleType": [],
+  "keywords": [
+    "image",
+    "cache",
+    "cordova",
+    "ionic"
+  ],
+  "dependencies": {
+    "angular": "^1.3.0",
+    "imgcache.js": "^1.0.0",
+    "q": "1.0.1"
+  },
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
