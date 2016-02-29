@@ -68,7 +68,7 @@ function MyController($imageCache, ....) {
       "http://path.to.my.awesome.image4"
     ];
     
-    $imageCache.cache(myImagesArray);
+    $imageCache.cache(myVerySlowToLoadImagesArray);
 }
 
 ......
