@@ -49,19 +49,25 @@
             if (typeof data === 'string') {
                 data = [data];
             }
-
+            var images = [];
+            angular.forEach(data, function(value) {
+                if(angular.isDefined(value)) {
+                    this.push(value);
+                }
+            }, images);
 
             var defer = $q.defer();
             var promises = [];
 
-            angular.forEach(data, function (value) {
+            angular.forEach(images, function (value) {
                 promises.push(QImgCache.cacheFile(value));
             });
 
             $q.all(promises).then(function () {
-                console.log(arguments);
                 $rootScope.$broadcast(eventPrefix + 'refresh');
-                defer.resolve();
+                defer.resolve(arguments);
+            }, function () {
+                defer.reject(arguments);
             });
 
             return defer.promise;
@@ -70,7 +76,7 @@
 
         function _clear(data) {
             if (typeof data === 'string') {
-                return QImgCache.removeFile();
+                return QImgCache.removeFile(data);
             }
 
             return QImgCache.clearCache();
