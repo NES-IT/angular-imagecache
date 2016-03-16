@@ -10,23 +10,39 @@
     angular.module('nes.imagecache', []);
 
     /**
-     * <img-cached   url="{{imageUrl}}" />
+     * <img-cached   url="{{imageUrl}}" background />
      */
     angular.module('nes.imagecache').directive('imgCached', function () {
+        function resolveTemplate(tElement, tAttrs) {
+            return typeof tAttrs.background !== 'undefined'
+                ? '<span ng-style="fullBackground"></span>'
+                : '<img />';
+        }
 
         return {
             restrict: 'E',
-            template: '<img />',
+            template: resolveTemplate,
             replace: true,
             link: function (scope, element, attrs) {
 
                 function _setImageFromCache() {
-                    QImgCache.useCachedFileWithSource(element, attrs.url);
+                    typeof attrs.background !== 'undefined'
+                        ? QImgCache.useCachedBackground(element)
+                        : QImgCache.useCachedFileWithSource(element, attrs.url);
                 }
 
                 if (typeof attrs.url === 'undefined') {
                     console.info('No src found for image');
                     return;
+                }
+
+                if(typeof attrs.background !== 'undefined') {
+                    scope.fullBackground = {
+                        'background-position' : 'center',
+                        'background-size'     : 'cover',
+                        'background-repeat'   : 'no-repeat',
+                        'background-image'    : 'url("' + attrs.url + '")'
+                    }
                 }
 
                 scope.$on(eventPrefix + 'refresh', _setImageFromCache);
@@ -38,6 +54,7 @@
             }
         }
     });
+
 
     angular.module('nes.imagecache').service('$imageCache', ['$q', '$rootScope', function ($q, $rootScope) {
 
