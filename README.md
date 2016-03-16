@@ -52,6 +52,14 @@ When you need to show the images you cached
 
 ```
 
+
+When you want to show an element with the image you cached as full background
+
+```html
+<img-cached ng-repeat="imgName in imagesUrlArrayIMayHaveCached"  url="{{imgName}}" background />
+
+```
+
 Note that even if the image is not cached at the time the directive gets printed in your html, one the image is cached the image will redraw itself :)
 
 
