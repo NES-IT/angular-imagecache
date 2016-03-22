@@ -35,7 +35,7 @@
 
                     function init () {
 
-                        if (scope.watchUrl) {
+                        if (attrs.watchUrl) {
 
                             scope.$watch('watchUrl', function (newUrl, oldUrl) {
 
