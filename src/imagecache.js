@@ -15,7 +15,7 @@
      */
     angular
         .module('nes.imagecache')
-        .directive('imgCached', function () {
+        .directive('imgCached', ['$timeout', function ($timeout) {
 
             return {
                 restrict: 'E',
@@ -32,8 +32,7 @@
                         init();
 
 
-
-                    function init () {
+                    function init() {
 
                         if (attrs.watchUrl) {
 
@@ -53,30 +52,51 @@
 
                     }
 
-                    function loadFromCache (url) {
+                    function loadFromCache(url) {
 
                         if (typeof url === 'undefined') {
                             console.info('No src found for image');
                             return;
                         }
 
-                        if(typeof attrs.background !== 'undefined') {
-                            scope.fullBackground = {
-                                'background-position' : 'center',
-                                'background-size'     : 'cover',
-                                'background-repeat'   : 'no-repeat',
-                                'background-image'    : 'url("' + url + '")'
-                            }
-                        }
+                        //if(typeof attrs.background !== 'undefined') {
+                        //    scope.fullBackground = {
+                        //        'background-position' : 'center',
+                        //        'background-size'     : 'cover',
+                        //        'background-repeat'   : 'no-repeat',
+                        //        'background-image'    : 'url("' + url + '")'
+                        //    }
+                        //}
 
-                        _setImageFromCache(url);
+                        ImgCache.isCached(url, function(src, isCached) {
+                            isCached
+                                ? _setImageFromCache(url)()
+                                : QImgCache.cacheFile(url).then(_setImageFromCache(url));
+
+                        })
+
                     }
 
                     function _setImageFromCache(url) {
-                        typeof attrs.background !== 'undefined'
-                            ? QImgCache.useCachedBackground(element)
-                            : QImgCache.useCachedFileWithSource(element, url);
+                        return function () {
+
+                            typeof attrs.background !== 'undefined'
+                                ? QImgCache.getCachedFileURL(url).then(function (cachePath) {
+                                $timeout(function() {
+                                    scope.fullBackground = {
+                                        'background-position': 'center',
+                                        'background-size': 'cover',
+                                        'background-repeat': 'no-repeat',
+                                        'background-image': 'url("' + cachePath + '")'
+                                    }
+                                });
+                            })
+                                : QImgCache.useCachedFileWithSource(element, url);
+
+                        }
+
                     }
+
                     //scope.$on(eventPrefix + 'refresh', _setImageFromCache);
 
                     //(typeof ionic !== 'undefined')
@@ -91,7 +111,7 @@
                     ? '<span ng-style="fullBackground"></span>'
                     : '<img />';
             }
-        });
+        }]);
 
 
     angular
@@ -107,8 +127,8 @@
                     data = [data];
                 }
                 var images = [];
-                angular.forEach(data, function(value) {
-                    if(angular.isDefined(value)) {
+                angular.forEach(data, function (value) {
+                    if (angular.isDefined(value)) {
                         this.push(value);
                     }
                 }, images);
